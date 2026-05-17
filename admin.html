@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeafSaathi Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f7f5f2;
+padding:30px;
+}
+
+.admin-box{
+max-width:900px;
+margin:auto;
+background:#fff;
+padding:30px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1{
+margin-bottom:25px;
+color:#1f3d2b;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.input-box{
+display:flex;
+flex-direction:column;
+}
+
+.input-box label{
+margin-bottom:8px;
+font-size:14px;
+font-weight:500;
+}
+
+.input-box input,
+.input-box textarea,
+.input-box select{
+padding:12px;
+border:1px solid #ccc;
+border-radius:10px;
+outline:none;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+.full{
+grid-column:1/3;
+}
+
+button{
+background:#1f3d2b;
+color:#fff;
+border:none;
+padding:14px 25px;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+margin-top:20px;
+}
+
+.preview{
+margin-top:40px;
+}
+
+.preview h2{
+margin-bottom:20px;
+}
+
+.product-card{
+background:#fff;
+border-radius:14px;
+padding:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
+margin-bottom:20px;
+position:relative;
+}
+
+.product-card img{
+width:100%;
+height:250px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.discount{
+position:absolute;
+top:20px;
+left:20px;
+background:#d62828;
+color:#fff;
+padding:5px 10px;
+border-radius:6px;
+font-size:12px;
+}
+
+.price{
+margin-top:10px;
+font-size:20px;
+font-weight:600;
+}
+
+.old{
+text-decoration:line-through;
+color:#888;
+font-size:15px;
+margin-left:8px;
+}
+
+.delete-btn{
+background:#c1121f;
+margin-top:15px;
+}
+
+@media(max-width:768px){
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+.full{
+grid-column:1/2;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="admin-box">
+
+<h1>LeafSaathi Admin Panel 🌿</h1>
+
+<div class="form-grid">
+
+<div class="input-box">
+<label>Product Name</label>
+<input type="text" id="name">
+</div>
+
+<div class="input-box">
+<label>Category</label>
+<select id="category">
+<option value="indoor">Indoor</option>
+<option value="outdoor">Outdoor</option>
+<option value="pots">Pots</option>
+<option value="decor">Decor</option>
+</select>
+</div>
+
+<div class="input-box">
+<label>Price</label>
+<input type="number" id="price">
+</div>
+
+<div class="input-box">
+<label>Old Price</label>
+<input type="number" id="oldPrice">
+</div>
+
+<div class="input-box">
+<label>Discount</label>
+<input type="text" id="discount" placeholder="50% OFF">
+</div>
+
+<div class="input-box">
+<label>Rating</label>
+<input type="text" id="rating" placeholder="⭐⭐⭐⭐⭐ 4.8">
+</div>
+
+<div class="input-box">
+<label>Reviews</label>
+<input type="text" id="reviews" placeholder="120">
+</div>
+
+<div class="input-box full">
+<label>Description</label>
+<textarea id="description"></textarea>
+</div>
+
+<div class="input-box full">
+<label>Image 1 URL</label>
+<input type="text" id="img1">
+</div>
+
+<div class="input-box full">
+<label>Image 2 URL</label>
+<input type="text" id="img2">
+</div>
+
+<div class="input-box full">
+<label>Image 3 URL</label>
+<input type="text" id="img3">
+</div>
+
+</div>
+
+<button onclick="addProduct()">Add Product</button>
+
+<div class="preview">
+<h2>Products</h2>
+<div id="product-list"></div>
+</div>
+
+</div>
+
+<script>
+
+let products = JSON.parse(localStorage.getItem('products')) || [];
+
+function saveProducts(){
+localStorage.setItem('products', JSON.stringify(products));
+}
+
+function addProduct(){
+
+let product = {
+name: document.getElementById('name').value,
+price: document.getElementById('price').value,
+oldPrice: document.getElementById('oldPrice').value,
+discount: document.getElementById('discount').value,
+rating: document.getElementById('rating').value,
+reviews: document.getElementById('reviews').value,
+description: document.getElementById('description').value,
+category: document.getElementById('category').value,
+images:[
+document.getElementById('img1').value,
+document.getElementById('img2').value,
+document.getElementById('img3').value
+]
+};
+
+products.push(product);
+
+saveProducts();
+
+renderProducts();
+
+alert('Product Added ✅');
+
+}
+
+function renderProducts(){
+
+let list = document.getElementById('product-list');
+
+list.innerHTML = '';
+
+products.forEach((p,index)=>{
+
+list.innerHTML += `
+<div class="product-card">
+
+<div class="discount">${p.discount}</div>
+
+<img src="${p.images[0]}">
+
+<h3>${p.name}</h3>
+
+<div class="price">
+₹${p.price}
+<span class="old">₹${p.oldPrice}</span>
+</div>
+
+<p>${p.rating} • ${p.reviews} reviews</p>
+
+<p>${p.description}</p>
+
+<button class="delete-btn" onclick="deleteProduct(${index})">
+Delete
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+function deleteProduct(index){
+
+products.splice(index,1);
+
+saveProducts();
+
+renderProducts();
+
+}
+
+renderProducts();
+
+</script>
+
+</body>
+</html>
